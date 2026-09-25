@@ -282,82 +282,218 @@
 
 // HW 3
 
-abstract class MediaItem{
-  String id;
-  String title;
-  double price;
+// abstract class MediaItem{
+//   String id;
+//   String title;
+//   double price;
 
-  MediaItem(this.id, this.title, this.price);
+//   MediaItem(this.id, this.title, this.price);
 
-  String getDetails();
+//   String getDetails();
+// }
+
+// mixin Downloadable{
+//   void download(String title){
+//     print("Downloading $title...");
+//   }
+// }
+
+// class Audiobook extends MediaItem with Downloadable{
+//   double durationHours;
+//   String narrator;
+
+//   Audiobook(String id, String title, double price, this.durationHours, this.narrator): super(id, title, price);
+
+//   @override
+//   String getDetails()=>"Audiobook: $title, Narrator: $narrator, Duration: ${durationHours}h, Price: \$${price}";
+// }
+
+// class EBook extends MediaItem with Downloadable{
+//   double fileSizeMB;
+//   String author;
+
+//   EBook(String id, String title, double price, this.fileSizeMB, this.author): super(id, title, price);
+
+//   @override
+//   String getDetails()=>"EBook: $title, Author: $author, Size: ${fileSizeMB} MB, Price: \$${price}";
+// }
+
+
+// class ShoppingCart{
+//   final List<MediaItem> _items=[];
+
+//   void addItem(MediaItem item)=> _items.add(item);
+
+//   double calculateTotalWithTax({double taxRate=0.12}){
+//     double total=_items.fold(0.0, (sum,item)=>sum+item.price);
+//     return total * (1+taxRate);
+//   }
+
+//   List<MediaItem> filterByMaxPrice(double maxPrice)
+// {
+//   return _items.where((item)=>item.price<=maxPrice).toList();
+// }
+
+//   void printReceipt(){
+//     print("===Receipt===");
+//     for(var item in _items){
+//       print(item.getDetails());
+//       if(item is Downloadable){
+//         (item as Downloadable).download(item.title);
+//       }
+//     }
+//     print("Total with tax: \$${calculateTotalWithTax().toStringAsFixed(2)}");
+//   }
+// }
+
+//   void main(){
+//     var cart=ShoppingCart();
+
+//     cart.addItem(Audiobook("1", "Atom Habits", 20.0, 5.5, "James Clear"));
+//     cart.addItem(Audiobook("2", "The Power of Habit", 15.0, 4.0, "Charles Duhigg"))
+//     ;
+//     cart.addItem(EBook("3", "Rich Dad Poor Dad", 10.0, 2.5, "Robert Kiyosaki"));
+//     cart.printReceipt();
+
+//     print("Filtered Items:" );
+//     var cheapItems=cart.filterByMaxPrice(18.0);
+//     for(var item in cheapItems){
+//       print(item.getDetails());
+//     }
+//   }
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const BusinessApp());
 }
 
-mixin Downloadable{
-  void download(String title){
-    print("Downloading $title...");
+class BusinessApp extends StatelessWidget {
+  const BusinessApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: ProfileCardScreen(),
+    );
   }
 }
 
-class Audiobook extends MediaItem with Downloadable{
-  double durationHours;
-  String narrator;
-
-  Audiobook(String id, String title, double price, this.durationHours, this.narrator): super(id, title, price);
+class ProfileCardScreen extends StatefulWidget {
+  const ProfileCardScreen({super.key});
 
   @override
-  String getDetails()=>"Audiobook: $title, Narrator: $narrator, Duration: ${durationHours}h, Price: \$${price}";
+  State<ProfileCardScreen> createState() => _ProfileCardScreenState();
 }
 
-class EBook extends MediaItem with Downloadable{
-  double fileSizeMB;
-  String author;
-
-  EBook(String id, String title, double price, this.fileSizeMB, this.author): super(id, title, price);
+class _ProfileCardScreenState extends State<ProfileCardScreen> {
+  bool _isFollowing = false;
+  int _followerCount = 69;
+  int _likesCount = 67;
 
   @override
-  String getDetails()=>"EBook: $title, Author: $author, Size: ${fileSizeMB} MB, Price: \$${price}";
-}
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Regular Dude Profile'),
+        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+        foregroundColor: Colors.white,
+        centerTitle: true,
+      ),
 
+      body: Center(
+        child: Card(
+          elevation: 6,
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                  backgroundColor: const Color.fromARGB(255, 159, 32, 197),
+                  child: Icon(Icons.person, size: 50, color: const Color.fromARGB(255, 0, 0, 0)),
+                ),
+                SizedBox(height: 16),
+                Text('Adi Irgimbayev'),
+                Text('Regular Dude'),
+                SizedBox(height: 20),
 
-class ShoppingCart{
-  final List<MediaItem> _items=[];
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Column(
+                        children: [
+                          Text('$_followerCount', style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                          const Text('Followers', style: TextStyle(color: Colors.grey)),
+                          const SizedBox(height: 12),
+                         ElevatedButton.icon(onPressed: _toggleFollow, icon: Icon(_isFollowing?Icons.check:Icons.person_add),label:Text(_isFollowing?'Following':'Follow'),),
+                         const SizedBox(height: 8),
+                          TextButton(onPressed: _resetFollowers, child: Text('Reset', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                          ),],),
 
-  void addItem(MediaItem item)=> _items.add(item);
+                          Column(
+                            children: [
+                              Text('$_likesCount', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                              const Text('Likes❤️', style: TextStyle(color: Colors.grey)),
+                              const SizedBox(height: 12),
 
-  double calculateTotalWithTax({double taxRate=0.12}){
-    double total=_items.fold(0.0, (sum,item)=>sum+item.price);
-    return total * (1+taxRate);
+                              Row(
+                                children: [
+                                  OutlinedButton.icon(onPressed: _incrementLike, icon:const Icon(Icons.favorite),label: const Text('Like'),
+                                  ),
+                                  const SizedBox(width:8),
+                                  OutlinedButton.icon(onPressed: _decrementLike, icon:const Icon(Icons.favorite_border),label: const Text('Unlike'),
+                                  ),],),
+
+                                const SizedBox(height: 8),
+                                TextButton(onPressed: _resetLikes, child: const Text('Reset', style: TextStyle(color: Colors.grey, fontSize:12 )),
+                                ),
+                            ],
+                          ),
+                    ],
+                ),    
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
-  List<MediaItem> filterByMaxPrice(double maxPrice)
-{
-  return _items.where((item)=>item.price<=maxPrice).toList();
-}
-
-  void printReceipt(){
-    print("===Receipt===");
-    for(var item in _items){
-      print(item.getDetails());
-      if(item is Downloadable){
-        (item as Downloadable).download(item.title);
+  void _toggleFollow(){
+    setState(() {
+      _isFollowing=!_isFollowing;
+      if(_isFollowing){
+        _followerCount++;
+      }else{
+        _followerCount--;
       }
-    }
-    print("Total with tax: \$${calculateTotalWithTax().toStringAsFixed(2)}");
+    });
   }
-}
 
-  void main(){
-    var cart=ShoppingCart();
+  void _incrementLike(){
+    setState(() {
+      _likesCount++;
+    });
+  }
 
-    cart.addItem(Audiobook("1", "Atom Habits", 20.0, 5.5, "James Clear"));
-    cart.addItem(Audiobook("2", "The Power of Habit", 15.0, 4.0, "Charles Duhigg"))
-    ;
-    cart.addItem(EBook("3", "Rich Dad Poor Dad", 10.0, 2.5, "Robert Kiyosaki"));
-    cart.printReceipt();
+  void _decrementLike(){
+    setState(() {
+      _likesCount--;
+    });
+  }
 
-    print("Filtered Items:" );
-    var cheapItems=cart.filterByMaxPrice(18.0);
-    for(var item in cheapItems){
-      print(item.getDetails());
-    }
+  void _resetFollowers(){
+    setState(() {
+      _isFollowing=false;
+      _followerCount=0;
+    });
+  }
+
+  void _resetLikes(){
+    setState(() {
+      _likesCount=0;
+    });
+  }
   }
