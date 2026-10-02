@@ -1,64 +1,24 @@
-// double processOrder({
-//   required int orderId,
+// double proccessOrder({
+//   required String OrderId,
 //   required double itemPrice,
-//   String? promoCode,
-//   double? delyveryFee,
+//   String? PromoCode,
+//   double? deliveryFee
 // }){
-//   double finalPrice = itemPrice;
-//   if(promoCode == "SAVE10"){
-//     finalPrice *= 0.9;
+//   double finalPrice=itemPrice;
+//   if(PromoCode=="SAVE10"){
+//     finalPrice=itemPrice*0.9;
 //   }
+//   double finalDelivery=deliveryFee??500.0;
+//   double total=finalDelivery+finalPrice;
 
-//   double deliveryFee = delyveryFee ?? 500.0;
-
-//   double total=finalPrice + deliveryFee;
+//   print("$OrderId");
+//   print("$total");
 
 //   return total;
 // }
-
-// void main() {
-//   print("Total price: ${processOrder(orderId: 1, itemPrice: 1000.0, promoCode: "SAVE10", delyveryFee: 200.0)}");
-//     print("Total price: ${processOrder(orderId: 2, itemPrice: 1000.0, promoCode: "SAVE10")}");
-//     print("Total price: ${processOrder(orderId: 3, itemPrice: 1000.0)}");
+// void main(){
+//   proccessOrder(OrderId: '101', itemPrice: 2000, PromoCode: "SAVE10",deliveryFee: 300);
 // }
-
-// void main() {
-//   String name = "Bekzat";
-//   int age = 25;
-//   double gpa = 3.4;
-//   bool isStudent = false;
-
-//   print("name : $name\nage: $age y.o.\ngpa: $gpa\nis Teacher: ${!isStudent}");
-
-//   String text1 = "Hello";
-//   // String nullText = null; not works
-//   String? text2 = null;
-//   print('text1: $text1');
-//   print('text2: $text2');
-
-//   int length1 = text1.length;
-//   int length2 = text2?.length ?? 0;
-//   print(length1);
-//   print(length2);
-
-//   String confirmedText = text2 ?? "default";
-//   print("confirmed $confirmedText length: ${confirmedText.length}");
-
-//   int digit = 3;
-//   print("MULTIPLICATION TABLE for digit $digit");
-//   for (int i = 1; i <= 10; i++) {
-//     print("$digit * $i = ${i * digit}");
-//   }
-
-//   for (int i = 10; i > 0; i--) {
-//     if (i % 2 == 0) {
-//       print("$i");
-//     } else {
-//       print("${i * 2}");
-//     }
-//   }
-// }
-
 // TASK 1
 // OUTPUT MULTIPLICATION TABLE  1-10
 
@@ -361,139 +321,188 @@
 //       print(item.getDetails());
 //     }
 //   }
-
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const BusinessApp());
+void main(){
+  runApp(const SportNutritionApp());
+
 }
 
-class BusinessApp extends StatelessWidget {
-  const BusinessApp({super.key});
+class SportNutritionApp extends StatelessWidget{
+  const SportNutritionApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ProfileCardScreen(),
+      title: "Sport Nutrition Store",
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+        useMaterial3: true,
+      ),
+      home: const ProductDetailScreen(),
     );
   }
 }
 
-class ProfileCardScreen extends StatefulWidget {
-  const ProfileCardScreen({super.key});
+class ProductDetailScreen extends StatefulWidget{
+  const  ProductDetailScreen({super.key});
 
   @override
-  State<ProfileCardScreen> createState() => _ProfileCardScreenState();
+
+    State<ProductDetailScreen> createState()=>_ProductDetailScreenState();
+
 }
 
-class _ProfileCardScreenState extends State<ProfileCardScreen> {
-  bool _isFollowing = false;
-  int _followerCount = 69;
-  int _likesCount = 67;
+class _ProductDetailScreenState extends State<ProductDetailScreen>{
+  bool _isBookMarked=false;
 
-  @override
-  Widget build(BuildContext context) {
+  @override 
+  Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Regular Dude Profile'),
-        backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-        foregroundColor: Colors.white,
+        title: const Text('Product Detail'),
         centerTitle: true,
       ),
-
-      body: Center(
-        child: Card(
-          elevation: 6,
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
+      body: SafeArea(child: Column(
+        children: [
+          Expanded(child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundColor: const Color.fromARGB(255, 159, 32, 197),
-                  child: Icon(Icons.person, size: 50, color: const Color.fromARGB(255, 0, 0, 0)),
+                Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16.0),
+                      child: Image.network('https://ir.ozone.ru/s3/multimedia-1-u/7167560646.jpg',
+                      height: 250,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context,error,StackTrace){
+                        return Container(
+                          height: 250,
+                          width: double.infinity,
+                          color: Colors.deepPurple,
+                          child: const Icon(
+                            Icons.fitness_center,
+                            size: 120,
+                            color: Colors.deepPurple,
+                          ),
+                        );
+                      },),),
+                    Positioned(
+                      top: 12,
+                      right: 12,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: IconButton(
+                          icon:Icon(
+                            _isBookMarked?Icons.bookmark:Icons.bookmark_border,
+                            color: Colors.deepPurple,
+                          ),
+                          onPressed: (){
+                            setState(() {
+                              _isBookMarked= !_isBookMarked;
+                            });
+                          },
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-                SizedBox(height: 16),
-                Text('Adi Irgimbayev'),
-                Text('Regular Dude'),
-                SizedBox(height: 20),
+                const SizedBox(height: 16),
 
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(
-                        children: [
-                          Text('$_followerCount', style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
-                          const Text('Followers', style: TextStyle(color: Colors.grey)),
-                          const SizedBox(height: 12),
-                         ElevatedButton.icon(onPressed: _toggleFollow, icon: Icon(_isFollowing?Icons.check:Icons.person_add),label:Text(_isFollowing?'Following':'Follow'),),
-                         const SizedBox(height: 8),
-                          TextButton(onPressed: _resetFollowers, child: Text('Reset', style: TextStyle(color: Colors.grey, fontSize: 12)),
-                          ),],),
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const[
+                    Expanded(child: Text('WHEY Gold Protein', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold
+                    ),
+                    ),),SizedBox(width: 8),
+                    Text('29 990 ₸',
+                    style: TextStyle(
+                      fontSize: 22, fontWeight: FontWeight.bold, color: Colors.deepPurple,
 
-                          Column(
-                            children: [
-                              Text('$_likesCount', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                              const Text('Likes❤️', style: TextStyle(color: Colors.grey)),
-                              const SizedBox(height: 12),
+                    ),),
+                  ],
+                ),
+                const SizedBox(height: 8),
 
-                              Row(
-                                children: [
-                                  OutlinedButton.icon(onPressed: _incrementLike, icon:const Icon(Icons.favorite),label: const Text('Like'),
-                                  ),
-                                  const SizedBox(width:8),
-                                  OutlinedButton.icon(onPressed: _decrementLike, icon:const Icon(Icons.favorite_border),label: const Text('Unlike'),
-                                  ),],),
+                Row(
+                  children: const[
+                    Icon(Icons.star, color:Colors.amber, size: 20),
+                    SizedBox(width: 4),
+                    Text('4.9', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16,
+                    ),), SizedBox(width: 6),
+                    Text('(67 reviews)', style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
 
-                                const SizedBox(height: 8),
-                                TextButton(onPressed: _resetLikes, child: const Text('Reset', style: TextStyle(color: Colors.grey, fontSize:12 )),
-                                ),
-                            ],
-                          ),
-                    ],
-                ),    
+                Wrap(
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  children: const[
+                    Chip(label: Text('Protein')),
+                    Chip(label: Text('3.0 kg')),
+                    Chip(label: Text('Banana')),
+                    Chip(label: Text('27g pr')),
+                    Chip(label: Text('Magnesium 0.67g')),
+                    
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                const Text(
+                  'Description',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),
+
+                ),
+                const SizedBox(height: 8),
+                const Text('BUY IT NOW', style: TextStyle(color: Colors.black54, height: 1.4),),
+
               ],
             ),
+          ),),
+
+          Container(padding: const EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color:Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -5),),
+              
+            ],
           ),
-        ),
-      ),
+          child: Row(
+            children: [
+              Expanded(child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+
+                onPressed: (){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Product added to Korzina'), duration: Duration(seconds: 2),),
+
+                  );
+                },
+                icon: const Icon(Icons.shopping_cart),
+                label: const Text('Korzinaga', style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
+              ),),
+            ],
+          ),),
+        ],
+      ),),
     );
   }
-
-  void _toggleFollow(){
-    setState(() {
-      _isFollowing=!_isFollowing;
-      if(_isFollowing){
-        _followerCount++;
-      }else{
-        _followerCount--;
-      }
-    });
-  }
-
-  void _incrementLike(){
-    setState(() {
-      _likesCount++;
-    });
-  }
-
-  void _decrementLike(){
-    setState(() {
-      _likesCount--;
-    });
-  }
-
-  void _resetFollowers(){
-    setState(() {
-      _isFollowing=false;
-      _followerCount=0;
-    });
-  }
-
-  void _resetLikes(){
-    setState(() {
-      _likesCount=0;
-    });
-  }
-  }
+}
