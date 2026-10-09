@@ -321,188 +321,278 @@
 //       print(item.getDetails());
 //     }
 //   }
-import 'package:flutter/material.dart';
 
-void main(){
-  runApp(const SportNutritionApp());
 
-}
+// // lw 6
+// import 'package:flutter/material.dart';
 
-class SportNutritionApp extends StatelessWidget{
-  const SportNutritionApp({super.key});
+// void main() {
+//   runApp(const SportNutritionApp());
+// }
 
-  @override
-  Widget build(BuildContext context){
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: "Sport Nutrition Store",
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-        useMaterial3: true,
-      ),
-      home: const ProductDetailScreen(),
-    );
-  }
-}
+// class SportNutritionApp extends StatelessWidget {
+//   const SportNutritionApp({super.key});
 
-class ProductDetailScreen extends StatefulWidget{
-  const  ProductDetailScreen({super.key});
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       title: "Sport Nutrition Store",
+//       theme: ThemeData(
+//         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+//         useMaterial3: true,
+//       ),
+//       home: const RegistrationScreen(),
+//     );
+//   }
+// }
 
-  @override
+// class RegistrationScreen extends StatefulWidget {
+//   const RegistrationScreen({super.key});
 
-    State<ProductDetailScreen> createState()=>_ProductDetailScreenState();
+//   @override
+//   State<RegistrationScreen> createState() => _RegistrationScreenState();
+// }
 
-}
+// class _RegistrationScreenState extends State<RegistrationScreen> {
+//   final _formKey =GlobalKey<FormState>();
 
-class _ProductDetailScreenState extends State<ProductDetailScreen>{
-  bool _isBookMarked=false;
+//   final TextEditingController _fullNameController =TextEditingController();
+//   final TextEditingController _emailController =TextEditingController();
+//   final TextEditingController _passwordController =TextEditingController();
+//   final TextEditingController _confirmPasswordController =TextEditingController();
 
-  @override 
-  Widget build(BuildContext context){
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Product Detail'),
-        centerTitle: true,
-      ),
-      body: SafeArea(child: Column(
-        children: [
-          Expanded(child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16.0),
-                      child: Image.network('https://ir.ozone.ru/s3/multimedia-1-u/7167560646.jpg',
-                      height: 250,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context,error,StackTrace){
-                        return Container(
-                          height: 250,
-                          width: double.infinity,
-                          color: Colors.deepPurple,
-                          child: const Icon(
-                            Icons.fitness_center,
-                            size: 120,
-                            color: Colors.deepPurple,
-                          ),
-                        );
-                      },),),
-                    Positioned(
-                      top: 12,
-                      right: 12,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: IconButton(
-                          icon:Icon(
-                            _isBookMarked?Icons.bookmark:Icons.bookmark_border,
-                            color: Colors.deepPurple,
-                          ),
-                          onPressed: (){
-                            setState(() {
-                              _isBookMarked= !_isBookMarked;
-                            });
-                          },
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 16),
+//   bool _isPasswordObscured=true;
+//   bool _isConfirmPasswordObscured =true;
+//   bool _termsAccepted =false;
+//   bool _termsError=false;
+//   String _selectedRole = 'Customer'; 
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const[
-                    Expanded(child: Text('WHEY Gold Protein', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold
-                    ),
-                    ),),SizedBox(width: 8),
-                    Text('29 990 ₸',
-                    style: TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold, color: Colors.deepPurple,
+//   final List<String> _roles = ['Customer', 'Trainer', 'Athlete'];
 
-                    ),),
-                  ],
-                ),
-                const SizedBox(height: 8),
+//   @override
+//   void dispose() {
+//     _fullNameController.dispose();
+//     _emailController.dispose();
+//     _passwordController.dispose();
+//     _confirmPasswordController.dispose();
+//     super.dispose();
+//   }
 
-                Row(
-                  children: const[
-                    Icon(Icons.star, color:Colors.amber, size: 20),
-                    SizedBox(width: 4),
-                    Text('4.9', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16,
-                    ),), SizedBox(width: 6),
-                    Text('(67 reviews)', style: TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
+//   void _submitForm() {
+//     setState(() {
+//       _termsError=!_termsAccepted;
+//     });
 
-                Wrap(
-                  spacing: 8.0,
-                  runSpacing: 8.0,
-                  children: const[
-                    Chip(label: Text('Protein')),
-                    Chip(label: Text('3.0 kg')),
-                    Chip(label: Text('Banana')),
-                    Chip(label: Text('27g pr')),
-                    Chip(label: Text('Magnesium 0.67g')),
-                    
-                  ],
-                ),
-                const SizedBox(height: 16),
+//     if (_formKey.currentState!.validate() && _termsAccepted) {
+//       print('=== Sport Nutrition Store: New User ===');
+//       print('Full Name: ${_fullNameController.text.trim()}');
+//       print('Email: ${_emailController.text.trim()}');
+//       print('Password: ${_passwordController.text}');
+//       print('Role: $_selectedRole');
+//       print('Terms Accepted: $_termsAccepted');
 
-                const Text(
-                  'Description',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,),
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(
+//           content: Text('Registration Successful! Welcome, ${_fullNameController.text.trim()}!'),
+//           backgroundColor: Colors.deepPurple,
+//           behavior: SnackBarBehavior.floating,
+//           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+//         ),
+//       );
+//     } else if (!_termsAccepted) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(
+//           content: Text('Please accept the Terms & Conditions to register.'),
+//           backgroundColor: Colors.redAccent,
+//           behavior: SnackBarBehavior.floating,
+//         ),
+//       );}
+//   }
 
-                ),
-                const SizedBox(height: 8),
-                const Text('BUY IT NOW', style: TextStyle(color: Colors.black54, height: 1.4),),
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('Create Account', style: TextStyle(fontWeight: FontWeight.bold)),
+//         centerTitle: true,
+//       ),
+//       body: SafeArea(
+//         child: SingleChildScrollView(
+//           padding: const EdgeInsets.all(20.0),
+//           child: Form(
+//             key: _formKey,
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Center(
+//                   child: Column(
+//                     children: const [
+//                       Icon(Icons.fitness_center, size: 64, color: Colors.deepPurple),
+//                       SizedBox(height: 8),
+//                       Text(
+//                         'Sport Nutrition Store',
+//                         style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.deepPurple),
+//                       ),
+//                       SizedBox(height: 4),
+//                       Text('Join us to get your supplements', style: TextStyle(color: Colors.grey)),
+//                     ],
+//                   ),
+//                 ),
+//                 const SizedBox(height: 24),
 
-              ],
-            ),
-          ),),
+//                 TextFormField(
+//                   controller: _fullNameController,
+//                   decoration: InputDecoration(
+//                     labelText: 'Full Name *',
+//                     prefixIcon: const Icon(Icons.person, color: Colors.deepPurple),
+//                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+//                   ),
+//                   validator: (value) {
+//                     if (value == null || value.trim().isEmpty) {
+//                       return 'Please enter your full name';
+//                     }
+//                     return null;
+//                   },),
+//                 const SizedBox(height: 16),
 
-          Container(padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color:Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -5),),
-              
-            ],
-          ),
-          child: Row(
-            children: [
-              Expanded(child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+//                 TextFormField(
+//                   controller: _emailController,
+//                   keyboardType: TextInputType.emailAddress,
+//                   decoration: InputDecoration(
+//                     labelText: 'Email *',
+//                     hintText: 'athlete@narxoz.kz',
+//                     prefixIcon: const Icon(Icons.email, color: Colors.deepPurple),
+//                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+//                   ),
+//                   validator:(value) {
+//                     if (value ==null||value.trim().isEmpty) {
+//                       return 'Please enter your email';
+//                     }
+//                     if (!value.contains('@') ||!value.contains('.')) {
+//                       return 'Enter a valid email containing "@" and "."';
+//                     }
+//                     return null;
+//                   },),
+//                 const SizedBox(height: 16),
 
-                onPressed: (){
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Product added to Korzina'), duration: Duration(seconds: 2),),
+//                 TextFormField(
+//                   controller:_passwordController,
+//                   obscureText:_isPasswordObscured,
+//                   decoration: InputDecoration(
+//                     labelText:'Password *',
+//                     prefixIcon:const Icon(Icons.lock, color: Colors.deepPurple),
+//                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+//                     suffixIcon: IconButton(
+//                       icon: Icon(_isPasswordObscured ? Icons.visibility_off : Icons.visibility),
+//                       onPressed: () {
+//                         setState(() {
+//                           _isPasswordObscured = !_isPasswordObscured;
+//                         });
+//                       },),
+//                   ),
+//                   validator: (value) {
+//                     if (value == null || value.isEmpty) {
+//                       return 'Please enter a password';
+//                     }
+//                     if (value.length < 6) {
+//                       return 'Password must be at least 6 characters long';
+//                     }
+//                     return null;
+//                   },),
+//                 const SizedBox(height: 16),
 
-                  );
-                },
-                icon: const Icon(Icons.shopping_cart),
-                label: const Text('Korzinaga', style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),),
-              ),),
-            ],
-          ),),
-        ],
-      ),),
-    );
-  }
-}
+//                 TextFormField(
+//                   controller: _confirmPasswordController,
+//                   obscureText:_isConfirmPasswordObscured,
+//                   decoration:InputDecoration(
+//                     labelText:'Confirm Password *',
+//                     prefixIcon:const Icon(Icons.lock_outline, color: Colors.deepPurple),
+//                     border: OutlineInputBorder(borderRadius:BorderRadius.circular(12)),
+//                     suffixIcon: IconButton(
+//                       icon: Icon(_isConfirmPasswordObscured?Icons.visibility_off : Icons.visibility),
+//                       onPressed: () {
+//                         setState(() {
+//                           _isConfirmPasswordObscured=!_isConfirmPasswordObscured;
+//                         });},
+//                     ),),
+//                   validator: (value) {
+//                     if (value==null||value.isEmpty) {
+//                       return 'Please confirm your password';
+//                     }
+//                     if (value != _passwordController.text) {
+//                       return 'Passwords do not match'; }
+//                     return null;
+//                   },),
+//                 const SizedBox(height: 16),
+
+//                 DropdownButtonFormField<String>(
+//                   value: _selectedRole,
+//                   decoration: InputDecoration(
+//                     labelText: 'Select Profile Type',
+//                     prefixIcon: const Icon(Icons.badge, color: Colors.deepPurple),
+//                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),),
+//                   items:_roles.map((String role) {
+//                     return DropdownMenuItem<String>(
+//                       value:role,
+//                       child:Text(role),
+//                     );
+//                   }).toList(),
+//                   onChanged: (String? newValue) {
+//                     if (newValue !=null) {
+//                       setState((){
+//                         _selectedRole=newValue;
+//                       });
+//                     } }, ),
+//                 const SizedBox(height: 16),
+
+
+//                 Row(
+//                   children: [
+//                     Checkbox(
+//                       activeColor:Colors.deepPurple,
+//                       value:_termsAccepted,
+//                       onChanged: (bool?value) {
+//                         setState(() {
+//                           _termsAccepted=value ??false;
+//                           if (_termsAccepted) _termsError=false;
+//                         });
+//                       },
+//                     ),
+//                     const Expanded(
+//                       child: Text('I accept the Terms and Conditions *'),
+//                     ),
+//                   ],
+//                 ),
+//                 if (_termsError)
+//                   const Padding(
+//                     padding: EdgeInsets.only(left:12.0),
+//                     child: Text(
+//                     'You must accept the terms to register',
+//                     style: TextStyle(color: Colors.red, fontSize: 12),
+//                     ),
+//                   ),
+//                 const SizedBox(height: 24),
+
+//                 SizedBox(
+//                   width: double.infinity,
+//                   height: 52,
+//                   child: ElevatedButton(
+//                   onPressed: _submitForm,
+//                   style: ElevatedButton.styleFrom(
+//                     backgroundColor: Colors.deepPurple,
+//                     foregroundColor: Colors.white,
+//                     shape: RoundedRectangleBorder(
+//                       borderRadius: BorderRadius.circular(12),),
+//                     ),
+//                     child: const Text(
+//                       'Register Now',
+//                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),),
+//                 ),
+//               ],),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
