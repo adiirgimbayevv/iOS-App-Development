@@ -36,6 +36,7 @@ class Product {
   final double price;
   final String category;
   final String date;
+  final double rating; 
 
   const Product({
     required this.id,
@@ -45,5 +46,6 @@ class Product {
     required this.price,
     required this.category,
     required this.date,
+    this.rating = 4.8,
   });
 }

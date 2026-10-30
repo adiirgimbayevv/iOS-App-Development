@@ -101,8 +101,7 @@ class _MainShellState extends State<MainShell> {
     );
   }
 }
-
-class FeedTab extends StatelessWidget {
+class FeedTab extends StatefulWidget {
   final List<Product> products;
   final Set<String> favoriteIds;
   final void Function(Product) onOpenDetail;
@@ -117,26 +116,301 @@ class FeedTab extends StatelessWidget {
   });
 
   @override
+  State<FeedTab> createState() => _FeedTabState();
+}
+
+class _FeedTabState extends State<FeedTab> {
+  late List<Product> _currentProducts;
+  bool _isGridView = false; 
+
+  @override
+  void initState() {
+    super.initState();
+    _currentProducts = List.from(widget.products);
+  }
+
+  Future<void> _handleRefresh() async {
+    await Future.delayed(const Duration(milliseconds: 1500));
+    setState(() {
+      final newProduct = Product(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: 'New Arrival Supplement #${_currentProducts.length + 1}',
+        description: 'Freshly stocked premium sports nutrition item loaded with top-tier macros.',
+        imageUrl: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800',
+        price: 14990,
+        category: 'New',
+        date: 'Today',
+        rating: 5.0,
+      );
+      _currentProducts.insert(0, newProduct);
+    });
+  }
+
+  void _removeItem(int index) {
+    final removedProduct = _currentProducts[index];
+    setState(() {
+      _currentProducts.removeAt(index);
+    });
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${removedProduct.title} removed'),
+        action: SnackBarAction(
+          label: 'UNDO',
+          textColor: AppColors.purpleGlow,
+          onPressed: () {
+            setState(() {
+              _currentProducts.insert(index, removedProduct);
+            });
+          },
+        ),
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  }
+
+  // Сброс каталога при Empty State
+  void _resetCatalog() {
+    setState(() {
+      _currentProducts = List.from(sampleProducts);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sport Nutrition Feed'),
+        title: const Text('Smart Catalog & Feed'),
         automaticallyImplyLeading: false,
+        actions: [
+          // Кнопка переключения режимов ( List <-> Grid )
+          IconButton(
+  icon: Icon(_isGridView ? Icons.view_list_outlined : Icons.grid_view_rounded),
+  tooltip: _isGridView ? 'Switch to List' : 'Switch to Grid',
+  onPressed: () {
+    setState(() {
+      _isGridView = !_isGridView;
+    });
+  },
+),
+        ],
       ),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: products.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 12),
-        itemBuilder: (context, index) {
-          final product = products[index];
-          final isFavorite = favoriteIds.contains(product.id);
-          return ProductCard(
+      body: _currentProducts.isEmpty
+          ? _buildEmptyState()
+          : RefreshIndicator(
+              color: AppColors.purpleGlow,
+              backgroundColor: AppColors.surfaceLight,
+              onRefresh: _handleRefresh,
+              child: _isGridView ? _buildGridCatalog() : _buildListCatalog(),
+            ),
+    );
+  }
+
+  // 4. Empty State UI
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.remove_shopping_cart_outlined, size: 72, color: AppColors.muted),
+            const SizedBox(height: 16),
+            const Text(
+              'Catalog is Empty',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.text),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'All items have been dismissed from the feed.',
+              style: TextStyle(color: AppColors.muted),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: _resetCatalog,
+              icon: const Icon(Icons.refresh),
+              label: const Text('Reset Catalog'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // View Mode 1: ListView.separated
+  Widget _buildListCatalog() {
+    return ListView.separated(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.all(16),
+      itemCount: _currentProducts.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final product = _currentProducts[index];
+        final isFavorite = widget.favoriteIds.contains(product.id);
+
+        return Dismissible(
+          key: ValueKey(product.id), // Mandatory ValueKey
+          direction: DismissDirection.endToStart,
+          background: Container(
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 20),
+            decoration: BoxDecoration(
+              color: AppColors.danger,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Icon(Icons.delete, color: Colors.white, size: 28),
+          ),
+          onDismissed: (_) => _removeItem(index),
+          child: ProductCard(
             product: product,
             isFavorite: isFavorite,
-            onTap: () => onOpenDetail(product),
-            onToggleFavorite: () => onToggleFavorite(product.id),
-          );
-        },
+            onTap: () => widget.onOpenDetail(product),
+            onToggleFavorite: () => widget.onToggleFavorite(product.id),
+          ),
+        );
+      },
+    );
+  }
+
+  // View Mode 2: GridView.builder (с aspectRatio: 0.72 во избежание RenderFlex)
+  Widget _buildGridCatalog() {
+    return GridView.builder(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.72, // Требование лабы против RenderFlex переполнений
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+      ),
+      itemCount: _currentProducts.length,
+      itemBuilder: (context, index) {
+        final product = _currentProducts[index];
+        final isFavorite = widget.favoriteIds.contains(product.id);
+
+        return Dismissible(
+          key: ValueKey(product.id),
+          direction: DismissDirection.down, // В сетке удобнее свайпать вниз или вбок
+          background: Container(
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: AppColors.danger,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Icon(Icons.delete, color: Colors.white, size: 28),
+          ),
+          onDismissed: (_) => _removeItem(index),
+          child: ProductGridCard(
+            product: product,
+            isFavorite: isFavorite,
+            onTap: () => widget.onOpenDetail(product),
+            onToggleFavorite: () => widget.onToggleFavorite(product.id),
+          ),
+        );
+      },
+    );
+  }
+}
+
+
+// Карточка для Grid режима (компактная версия под aspectRatio 0.72)
+class ProductGridCard extends StatelessWidget {
+  final Product product;
+  final bool isFavorite;
+  final VoidCallback onTap;
+  final VoidCallback onToggleFavorite;
+
+  const ProductGridCard({
+    super.key,
+    required this.product,
+    required this.isFavorite,
+    required this.onTap,
+    required this.onToggleFavorite,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.border),
+          ),
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        product.imageUrl,
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: AppColors.surfaceLight,
+                          child: const Icon(Icons.fitness_center, color: AppColors.purpleGlow),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 4,
+                      right: 4,
+                      child: GestureDetector(
+                        onTap: onToggleFavorite,
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface.withValues(alpha: 0.7),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            size: 18,
+                            color: isFavorite ? AppColors.danger : AppColors.muted,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                product.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.text),
+              ),
+              const SizedBox(height: 2),
+              Row(
+                children: [
+                  const Icon(Icons.star, size: 14, color: Colors.amber),
+                  const SizedBox(width: 4),
+                  Text(
+                    product.rating.toString(),
+                    style: const TextStyle(fontSize: 12, color: AppColors.muted),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '${product.price.toStringAsFixed(0)} ₸',
+                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.purpleGlow),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

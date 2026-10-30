@@ -52,10 +52,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>{
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(16.0),
-                      child: Image.network('https://ir.ozone.ru/s3/multimedia-1-u/7167560646.jpg',
+                      child: Image.network('https://images.unsplash.com/photo-1593095948071-474c5cc2989d?q=80&w=1000&auto=format&fit=crop',
                       height: 250,
                       width: double.infinity,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fitWidth,
                       errorBuilder: (context,error,StackTrace){
                         return Container(
                           height: 250,
@@ -64,7 +64,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>{
                           child: const Icon(
                             Icons.fitness_center,
                             size: 120,
-                            color: Colors.deepPurple,
+                            color: Colors.white,
                           ),
                         );
                       },),),
