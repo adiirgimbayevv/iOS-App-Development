@@ -1,15 +1,12 @@
-// Lab 6: Registration form
-// Lab 7: BottomNavigationBar + Navigator.push/pop with product arguments
-// Auth: local accounts stay after refresh; logout + login supported
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:provider/provider.dart';
+import 'models.dart'; 
 import 'app_theme.dart';
 import 'auth_storage.dart';
+import 'cart_provider.dart';
 import 'login_screen.dart';
 import 'main_shell.dart';
-import 'models.dart';
 import 'registration_screen.dart';
 
 Future<void> main() async {
@@ -20,7 +17,14 @@ Future<void> main() async {
       statusBarIconBrightness: Brightness.light,
     ),
   );
-  runApp(const SportNutritionApp());
+  
+  runApp(
+    // Шаг 2: Оборачиваем весь runApp в ChangeNotifierProvider
+    ChangeNotifierProvider(
+      create: (_) => CartProvider(),
+      child: const SportNutritionApp(),
+    ),
+  );
 }
 
 class SportNutritionApp extends StatelessWidget {
